@@ -447,6 +447,8 @@ NumPy time: 0.13581609725952148 seconds
 
     \begin{frame}[fragile]{Python VS NumPy VS PyArrow}{PyArrow}
         \begin{lstlisting}[language=bash]
+>>> import pyarrow as pa
+>>> import pyarrow.compute as pc
 >>> arr_pa = pa.array(range(size), type=pa.int64())
 >>> start = time.time()
 >>> squared_pa = pc.multiply(arr_pa, arr_pa)
@@ -514,11 +516,22 @@ Out[6]: array(['1', '2', '3.3'], dtype='<U21')
         Il est également utilisé comme base pour d'autres librairies scientifiques en Python.
     \end{frame}
 
+    \begin{frame}{NumPy}{Fonctions et objets\cref{numpy-website}}
+        \begin{itemize}
+            \item Les tableaux sont créés directement sur le module \lstinline{numpy} ou \lstinline{np} si importé avec \lstinline{import numpy as np}.
+            \item Les fonctions mathématiques de base sont dans \lstinline{numpy.emath}.
+            \item Les types sont dans \lstinline{numpy.dtypes}.
+        \end{itemize}
+        \bigbreak
+        \centering
+        \includegraphics[width=7cm]{image/numpy-humor}
+    \end{frame}
+
     \begin{frame}{NumPy}{La pratique}
         Ouvrir le Notebook \url{https://github.com/DigicompClassesByPapIT/PYDATA/blob/main/2_numpy.ipynb}.
         \bigbreak
         \centering
-        \includegraphics[width=7cm]{image/digicomp-lightbulb}
+        \includegraphics[width=5cm]{image/digicomp-lightbulb}
     \end{frame}
 
 
@@ -673,7 +686,7 @@ assert len(df_sub_filtered["id_store"].notnull()) == len(df_sub[df_sub_mask])
         Il permet entre autre~:
         \begin{itemize}
             \item de visualiser les données manquantes
-            \item de visualiser les distributions des variables, comme un \lstinline{pandas.DataFrame.describe}
+            \item de visualiser les distributions des variables, comme un \href{https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.describe.html}{\lstinline{pandas.DataFrame.describe}}
             \item de visualiser les corrélations entre les variables
             \item de visualiser les valeurs aberrantes
             \item Many more\ldots{}
@@ -683,13 +696,82 @@ assert len(df_sub_filtered["id_store"].notnull()) == len(df_sub[df_sub_mask])
 
     \subsection{Combinaison et transformation de données}
 
+    \begin{frame}[fragile]{Combinaison et transformation de données}{Combinaison}
+        Il est possible de combiner plusieurs \lstinline{pandas.DataFrame} en un seul.
+
+        En fusions deux DataFrames sur une colonne qu'ils ont en commun, ici \lstinline{model} avec la méthode \href{https://pandas.pydata.org/docs/reference/api/pandas.merge.html}{\lstinline{pandas.merge}}.
+        \begin{lstlisting}[language=python]
+import pandas as pd
+df_car = pd.DataFrame({"model": ["Mercedes", "BMW", "Dacia"], "price": [41_000, 37_000, 15_000]})
+df_production_years = pd.DataFrame({"model": ["Mercedes", "BMW", "Dacia"], "year": [2020, 2021, 2019]})
+df_car = pd.merge(df_car, df_production_years, on="model", how="inner") # SQL style
+        \end{lstlisting}
+        \lstinline{df_car} contient les deux DataFrame~:
+        \begin{lstlisting}[language=bash]
+In [5]: df_car.head(2)
+Out[5]:
+      model  price  year
+0  Mercedes  41000  2020
+1       BMW  37000  2021
+        \end{lstlisting}
+    \end{frame}
+
+    \begin{frame}[fragile]{Combinaison et transformation de données}{Combinaison}
+        En concaténant deux DataFrames \textbf{de même format}, avec la méthode \href{https://pandas.pydata.org/docs/reference/api/pandas.concat.html}{\lstinline{pandas.concat}}.
+        \begin{lstlisting}[language=python]
+import pandas as pd
+df_cars = pd.DataFrame({"model": ["Mercedes", "BMW", "Dacia"], "price": [41_000, 37_000, 15_000]})
+df_cheaper_cars = pd.DataFrame({"model": ["Nissan", "Fiat"], "price": [15_000, 10_000]})
+df_cars = pd.concat([df_cars, df_cheaper_cars], ignore_index=True)
+        \end{lstlisting}
+        \lstinline{df_cars} contient maintenant les deux DataFrame~:
+        \begin{lstlisting}[language=bash]
+In [8]: df_cars.head(5)
+Out[8]:
+      model  price
+0  Mercedes  41000
+1       BMW  37000
+2     Dacia  15000
+3    Nissan  15000
+4      Fiat  10000
+        \end{lstlisting}
+    \end{frame}
+
     \subsection{Agrégation et regroupement de données}
 
-    \begin{frame}
-        Si il y a une colonne en trop
+    \begin{frame}{Agrégation et regroupement de données}
+        S'il y a une colonne en trop, par exemple le detail d'une facture, alors que l'on veut uniquement les factures.
+        On peut obtenir une seule ligne par facture en faisant un \lstinline{pandas.DataFrame.groupby} et une somme sur la liste de chaque produit.
+        \bigbreak
+        Le \lstinline{pandas.DataFrame.groupby} agrège et doit être associé à une fonction comme~:
+        \begin{itemize}
+            \item \href{https://pandas.pydata.org/docs/reference/api/pandas.core.groupby.DataFrameGroupBy.mean.html\#pandas.core.groupby.DataFrameGroupBy.mean}{\lstinline{pandas.core.groupby.DataFrameGroupBy.mean}}~: pour la moyenne
+            \item \href{https://pandas.pydata.org/docs/reference/api/pandas.core.groupby.DataFrameGroupBy.median.html\#pandas.core.groupby.DataFrameGroupBy.median}{\lstinline{pandas.core.groupby.DataFrameGroupBy.median}}~: pour la médiane
+            \item \href{https://pandas.pydata.org/docs/reference/api/pandas.core.groupby.DataFrameGroupBy.sum.html\#pandas.core.groupby.DataFrameGroupBy.sum}{\lstinline{pandas.core.groupby.DataFrameGroupBy.sum}}~: pour la somme
+            \item \href{https://pandas.pydata.org/docs/reference/api/pandas.core.groupby.DataFrameGroupBy.count.html\#pandas.core.groupby.DataFrameGroupBy.count}{\lstinline{pandas.core.groupby.DataFrameGroupBy.count}}~: pour énumérer
+            \item \href{https://pandas.pydata.org/docs/reference/api/pandas.core.groupby.DataFrameGroupBy.agg.html\#pandas.core.groupby.DataFrameGroupBy.agg}{\lstinline{pandas.core.groupby.DataFrameGroupBy.agg}}~: pour passer sa propre fonction d'agrégation en argument
+        \end{itemize}
     \end{frame}
 
     \subsection{Traitement des données temporelles}
+
+    \begin{frame}[fragile]{Traitement des données temporelles\footnote{How to handle time series data with ease~?, \url{https://pandas.pydata.org/pandas-docs/version/1.2.4/getting_started/intro_tutorials/09_timeseries.html}}}
+        Pour accéder aux attributs et méthodes d'une colonne, \textit{i.e.}, \lstinline{pandas.Series} il faut s'assurer que le type est bien un type temporel.
+        Pour caster une \lstinline{pandas.Series} il existe la méthode \lstinline{pandas.to_datetime} qui permet de convertir une colonne en type temporel \lstinline{datetime}.
+        \bigbreak
+        \begin{lstlisting}[language=python]
+import pandas as pd
+air_quality = pd.read_csv("air_quality_no2_long.csv")
+air_quality["datetime"] = pd.to_datetime(air_quality["date.utc"])
+air_quality.groupby(
+    [air_quality["datetime"].dt.weekday, "location"]
+)["value"].mean()
+        \end{lstlisting}
+        Que fait ce code~?
+        \pause
+        \bigbreak
+        Cette transformation permet de créer une nouvelle donnée, le jour de la semaine et d'analyser la qualité de l'air en fonction de cette dernière.
+    \end{frame}
 
 
     \section{Les types en Numpy et Pandas}
@@ -782,10 +864,124 @@ Out[45]: numpy.uint16
 
     \section{Visualisation avec Plotly}
 
-    \subsection{Types de graphiques~: ligne, point, histogramme, bar, pie, ...}
+    \begin{frame}{Plotly}{Plotly et Plotly Express}
+        \footnotesize
+        Plotly est une librairie de visualisation de données qui affiche des graphiques interactifs de différents formats~:
+        \begin{itemize}
+            \item Graphique HTML à insérer dans une page web
+            \item Graphique PNG, SVG, PDF, \textit{etc} à insérer dans un document
+            \item L'objet graphique Plotly est un objet Python qui peut directement être affiché dans un notebook Jupyter.
+        \end{itemize}
+        \bigbreak
+        Les images ne sont pas des graphiques interactifs, mais des statiques, concernant le HTML il l'est, grâce à WebGL, le Python l'est également dans IPython.
+        Des sélecteurs peuvent être ajoutés pour filtrer les données, zoomer, \textit{etc}.
 
-    \subsection{Label, légende, grille, axes, titre}
+        Contrairement à Matplotlib et Seaborn qui ne génèrent que des images uniquement.
+        \bigbreak
+        L'algorithme qui gère le graphique peut être codé en~:
+        \begin{itemize}
+            \item Python
+            \item JavaScript
+            \item R
+            \item Julia
+            \item Scala
+            \item \textit{etc}
+        \end{itemize}
+    \end{frame}
 
+    \begin{frame}{Plotly}{Plotly et Plotly Express}
+        Quasiment tous les types de graphiques sont gérés, voir \url{https://plotly.com/python/}.
+        \bigbreak
+        De nombreux langages de programmation sont supportés, y compris ceux plus spécifiques à la data.
+        \bigbreak
+        L'API se divise en deux parties~:
+        \begin{itemize}
+            \item \href{https://plotly.com/python/}{Plotly}~: API plus complète, avec de nombreuses options de personnalisation.
+            \item \href{https://plotly.com/python/plotly-express/}{Plotly Express}~: pour les graphiques simples, avec une API plus simple et rapide pour prototyper.
+        \end{itemize}
+        \bigbreak
+        \begin{dangercolorbox}
+            \emoji{police-car-light} \textbf{Opinion du formateur~:} Il est complètement inutile d'appendre une autre API que celle de Plotly, cette dernière fait tout et mieux\ldots{}
+        \end{dangercolorbox}
+    \end{frame}
+
+    \subsection{Plotly Express}\label{plotly-express}
+    \begin{frame}[fragile]{Plotly}{Plotly et Plotly Express}
+        \begin{columns}
+            \column{0.5\textwidth}
+            \begin{lstlisting}[language=python,basicstyle=\tiny\ttfamily]
+import pandas as pd
+import plotly.express as px
+
+# Exemple de DataFrame avec ventes fictives
+df_cars = pd.DataFrame({
+    "model": ["Mercedes", "BMW", "Dacia", "Nissan", "Fiat"],
+    "price": [41000, 37000, 15000, 15000, 10000],
+    "sales": [120, 95, 300, 80, 60]  # Ventes fictives
+})
+
+# Camembert des ventes par modèle
+fig = px.pie(
+    df_cars,
+    names="model",
+    values="sales",
+    title="Répartition des ventes par modèle"
+)
+fig
+            \end{lstlisting}
+            \column{0.5\textwidth}
+            \centering
+            \includegraphics[width=6cm]{image/plotly-pie-chart}
+        \end{columns}
+        \flushleft
+        \bigbreak
+        Un graphique minimal peut être généré en passant directement le DataFrame à la fonction \lstinline{plotly.express.pie}.
+
+        Mais même cette version \textquote{simple} offre ne nombreuses possibilités de personnalisation, voir \url{https://plotly.com/python-api-reference/generated/plotly.express.pie}.
+    \end{frame}
+
+
+    \subsection{Plotly}\label{plotly}
+    \begin{frame}[fragile]{Plotly}{Plotly et Plotly Express}
+        \begin{columns}
+            \column{0.5\textwidth}
+            \begin{lstlisting}[language=python,basicstyle=\tiny\ttfamily]
+import pandas as pd
+import plotly.graph_objects as go
+
+# Exemple de DataFrame avec ventes fictives
+df_cars = pd.DataFrame({
+    "model": ["Mercedes", "BMW", "Dacia", "Nissan", "Fiat"],
+    "price": [41000, 37000, 15000, 15000, 10000],
+    "sales": [120, 95, 300, 80, 60]
+})
+
+# Création du graphique en secteurs avec plotly.graph_objects
+# On peut avoir plusieurs graphiques dans la même figure
+fig = go.Figure(
+    data=[go.Pie(labels=df_cars["model"], values=df_cars["sales"])]
+)
+fig.update_layout(title_text="Répartition des ventes par modèle")
+fig
+            \end{lstlisting}
+            \column{0.5\textwidth}
+            \centering
+            \includegraphics[width=6cm]{image/plotly-pie-chart}
+        \end{columns}
+        \flushleft
+        \bigbreak
+        Un graphique minimal peut être généré en passant directement le DataFrame à la fonction \lstinline{plotly.express.pie}.
+
+        Mais même cette version \textquote{simple} offre ne nombreuses possibilités de personnalisation, voir \url{https://plotly.com/python-api-reference/generated/plotly.express.pie}.
+    \end{frame}
+
+    \subsection{Exercice}\label{plotly-exercice}
+    \begin{frame}{Plotly}{Exercice \execcounterdispinc{}}
+        Ouvrir le Notebook \url{https://github.com/DigicompClassesByPapIT/PYDATA/blob/main/4_plotly.ipynb}.
+        \bigbreak
+        \centering
+        \includegraphics[width=7cm]{image/digicomp-lightbulb}
+    \end{frame}
 
     \section{Exemple d'analyse de données financières}
 
