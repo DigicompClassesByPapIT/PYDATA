@@ -18,3 +18,7 @@ mysql-connector-python
 sqlalchemy
 # YData Profiling for data profiling
 ydata-profiling
+# Requête de données financières
+yfinance
+# Deep learning
+tensorflow

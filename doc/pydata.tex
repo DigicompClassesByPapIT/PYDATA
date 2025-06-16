@@ -940,7 +940,6 @@ fig
         Mais même cette version \textquote{simple} offre ne nombreuses possibilités de personnalisation, voir \url{https://plotly.com/python-api-reference/generated/plotly.express.pie}.
     \end{frame}
 
-
     \subsection{Plotly}\label{plotly}
     \begin{frame}[fragile]{Plotly}{Plotly et Plotly Express}
         \begin{columns}
@@ -970,9 +969,7 @@ fig
         \end{columns}
         \flushleft
         \bigbreak
-        Un graphique minimal peut être généré en passant directement le DataFrame à la fonction \lstinline{plotly.express.pie}.
-
-        Mais même cette version \textquote{simple} offre ne nombreuses possibilités de personnalisation, voir \url{https://plotly.com/python-api-reference/generated/plotly.express.pie}.
+        Le même graphique peut être généré avec l'API Plotly, \lstinline{plotly.graph_objects}, voir \url{https://plotly.com/python/graph-objects/}.
     \end{frame}
 
     \subsection{Exercice}\label{plotly-exercice}
@@ -983,7 +980,14 @@ fig
         \includegraphics[width=7cm]{image/digicomp-lightbulb}
     \end{frame}
 
-    \section{Exemple d'analyse de données financières}
+
+    \section{Exemple d'analyse de données en open data sur l'énergie}
+    \begin{frame}{Utilisation de l'open data à des fins marketing}{Exercice \execcounterdispinc{}}
+        Ouvrir le Notebook \url{https://github.com/DigicompClassesByPapIT/PYDATA/blob/main/5_marketing_minergie.ipynb}.
+        \bigbreak
+        \centering
+        \includegraphics[width=7cm]{image/digicomp-lightbulb}
+    \end{frame}
 
 
     \section{Introduction au Machine Learning}\label{sec:ml}
@@ -1004,7 +1008,7 @@ fig
     \end{frame}
 
     \begin{frame}{Introduction au Machine Learning}{Régression linéaire avec Scikit-learn}
-        Télécharger et ouvrir le notebook \url{https://github.com/DigicompClassesByPapIT/Python/blob/main/15_simple_linear_regression}.
+        Télécharger et ouvrir le notebook \url{https://github.com/DigicompClassesByPapIT/Python/blob/main/6_simple_linear_regression}.
         Ce dernier illustre un exemple de régression linéaire simple avec Scikit-learn.
         \bigbreak
         \begin{columns}
@@ -1042,6 +1046,15 @@ fig
         \bigbreak
         La variable \textit{target} est les ventes, les \textit{features} sont les budgets publicitaires.
         Trouver quelle est la meilleure \textit{feature} de prédiction des ventes, celle qui a le R carré le plus élevé.
+    \end{frame}
+
+
+    \section{Deep Learning}\label{sec:dl}
+    \begin{frame}{Deep Learning (réseau de neuronnes récurrents)}{Exercice \execcounterdispinc{}}
+        Ouvrir le Notebook \url{https://github.com/DigicompClassesByPapIT/PYDATA/blob/main/7_tensorflow_btc_prediction.ipynb}.
+        \bigbreak
+        \centering
+        \includegraphics[width=7cm]{image/btc-price-prediction}
     \end{frame}
 
 
