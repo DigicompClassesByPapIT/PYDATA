@@ -259,7 +259,7 @@
         \begin{itemize}
             \item \lstinline{pip install ipython}
             \item \lstinline{pip install jupyter}, mais cette commande est à privilégier dans un virtual environnement.
-            Un virtual environnement est un environnement Python isolé, qui permet de ne pas polluer l'environnement global de Python.
+            Un virtual environnement est un environnement Python isolé, qui permet de ne pas polluer l'environnement global de Python et éviter les conflits de version.
         \end{itemize}
     \end{frame}
 
@@ -308,8 +308,8 @@
             \begin{itemize}
                 \footnotesize
                 \item \lstinline{!} en début d'une ligne d'une cellule permet d'ajouter une commande Shell, sorting du Shell Python.
-                \item \texttt{Ctrl + Enter}~: Exécuter la cellule
-                \item \texttt{Shift + Enter}~: Exécuter et passer à la suivante
+                \item \textbf{\texttt{Ctrl + Enter}~: Exécuter la cellule}
+                \item \textbf{\texttt{Shift + Enter}~: Exécuter et passer à la suivante}
             \end{itemize}
         \end{itemize}
     \end{frame}
@@ -383,15 +383,15 @@ voila --TagRemovePreprocessor.remove_cell_tags='{"hide"}' mon_notebook.ipynb
         La programmation fonctionnelle est un paradigme de programmation qui utilise des fonctions comme unités de base.
         Ces fonctions sont séparées en deux types~:
         \begin{itemize}
-            \item Les fonctions pures, qui ne modifient pas, ni ne dépendent pas de l'état du programme ou de son environnement.
-            \item Les fonctions impures ou avec effet de bord, qui modifient l'état du programme ou de la machine (affichage) ou dépendent de l'état du programme, d'une condition extérieure\ldots{}
+            \item Les fonctions pures, qui ne modifient pas, ni ne dépendent pas de l'état du programme ou de son environnement. Elles sont à favoriser.
+            \item Les fonctions impures ou avec effet de bord, qui modifient l'état du programme ou de la machine (affichage) ou dépendent de l'état du programme, d'une condition extérieure\ldots{} Elles sont à éviter.
         \end{itemize}
         Les fonctions \textit{lambda} venant du \textit{lambda calculus}.
-        Ces expressions sont associées à map, reduce, filter, etc.
+        Ces expressions sont souvent associées à des \textit{High Order Function} (HOF) map, reduce, filter, etc.
     \end{frame}
 
     \begin{frame}{Expressions\textit{lambda}}{Pourquoi des fonctions et non des objets}
-        Scala prétend que la programmation fonctionnelle permet une mise à l'échelle plus facile des gros projets.
+        Scala prétend que la programmation fonctionnelle permet une mise à l'échelle plus simple des gros projets.
         D'où son nom, Scala pour \textit{SCAlable LAnguage}.
 
         Mais Pourquoi~?
@@ -684,7 +684,7 @@ In [50]: print(car)
 df_7965 = df_orders[df_orders["id_store"] == 7965]
         \end{lstlisting}
         \begin{dangercolorbox}
-            Appliquer le masque ne modifie le DataFrame, il permet d'en retourner un nouveau qu'il faut assigner à une nouvelle variable.
+            Appliquer le masque ne modifie pas le DataFrame, il permet d'en retourner un nouveau qu'il faut assigner à une nouvelle variable.
 
             Il en va de même pour la plupart des transformations de DataFrame, elles ne sont pas \textit{in place}, il faut penser à stocker le retour.
             Certaines exceptions cependant, comme \lstinline{pandas.DataFrame.drop}, qui modifie le DataFrame sur place si l'on change la valeur de l'argument \lstinline{inplace} à \lstinline{True}.
@@ -732,7 +732,7 @@ assert len(df_sub_filtered["id_store"].notnull()) == len(df_sub[df_sub_mask])
             \item de visualiser les données manquantes
             \item de visualiser les distributions des variables, comme un \href{https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.describe.html}{\lstinline{pandas.DataFrame.describe}}
             \item de visualiser les corrélations entre les variables
-            \item de visualiser les valeurs aberrantes
+            \item de visualiser les valeurs aberrantes (\textit{outliers})
             \item \textit{Many more}\ldots{}
         \end{itemize}
         Cette librairie permet de savoir facilement quelles données sont à néttoyer, supprimer.
@@ -748,7 +748,7 @@ assert len(df_sub_filtered["id_store"].notnull()) == len(df_sub[df_sub_mask])
     \begin{frame}[fragile]{Combinaison et transformation de données}{Merge de Dataframes}
         Il est possible de combiner plusieurs \lstinline{pandas.DataFrame} en un seul.
 
-        En fusions deux DataFrames sur une colonne qu'ils ont en commun, ici \lstinline{model} avec la méthode \href{https://pandas.pydata.org/docs/reference/api/pandas.merge.html}{\lstinline{pandas.merge}}.
+        En fusions deux DataFrames sur une colonne qu'ils ont en commun, ici \lstinline{model}, avec la méthode \href{https://pandas.pydata.org/docs/reference/api/pandas.merge.html}{\lstinline{pandas.merge}}.
         \begin{lstlisting}[language=python]
 import pandas as pd
 df_car = pd.DataFrame({"model": ["Mercedes", "BMW", "Dacia"], "price": [41_000, 37_000, 15_000]})
@@ -797,7 +797,7 @@ Out[8]:
         S'il y a une colonne en trop, par exemple le detail d'une facture, alors que l'on veut uniquement les factures.
         On peut obtenir une seule ligne par facture en faisant un \lstinline{pandas.DataFrame.groupby} et une somme sur la liste de chaque produit.
         \bigbreak
-        Le \lstinline{pandas.DataFrame.groupby} agrège et doit être associé à une fonction comme~:
+        Le \lstinline{pandas.DataFrame.groupby} agrège et doit être associé à une fonction d'agrégation comme~:
         \begin{itemize}
             \item \href{https://pandas.pydata.org/docs/reference/api/pandas.core.groupby.DataFrameGroupBy.mean.html\#pandas.core.groupby.DataFrameGroupBy.mean}{\lstinline{pandas.core.groupby.DataFrameGroupBy.mean}}~: pour la moyenne
             \item \href{https://pandas.pydata.org/docs/reference/api/pandas.core.groupby.DataFrameGroupBy.median.html\#pandas.core.groupby.DataFrameGroupBy.median}{\lstinline{pandas.core.groupby.DataFrameGroupBy.median}}~: pour la médiane
