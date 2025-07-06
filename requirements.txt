@@ -2,6 +2,8 @@
 CheckMyTex
 # Required for Notebooks, it will install IPython and Jupyter
 jupyter
+# Voila for rendering Jupyter Notebooks as web applications
+voila
 # Required for ML
 pandas
 numpy

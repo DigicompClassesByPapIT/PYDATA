@@ -615,7 +615,7 @@ Out[6]: array(['1', '2', '3.3'], dtype='<U21')
     \begin{frame}[fragile]{Structures de données (Series, DataFrame)}
         Un \lstinline{DataFrame} est une structure de données tabulaire, similaire à une feuille de calcul Excel ou une table SQL.
 
-        Une \lstinline{Serie} est l'équivalent d'une colonne dans un \lstinline{DataFrame}.
+        Une \lstinline{Series} est l'équivalent d'une colonne dans un \lstinline{DataFrame}.
         \begin{lstlisting}[language=bash]
 In [46]: import pandas as pd
 In [47]: car = pd.DataFrame({
@@ -637,6 +637,27 @@ In [50]: print(car)
     \begin{frame}{Structures de données (Series, DataFrame)}
         \centering
         \includegraphics[width=12cm]{image/dataframe-n-series}
+    \end{frame}
+
+    \begin{frame}[fragile]{Structures de données (Series, DataFrame)}
+        On peut sélectionner une \lstinline{Series}~:
+        \begin{lstlisting}[language=bash]
+In [3]: car = pd.DataFrame({
+             "model": ["Mercedes", "BMW", "Dacia"],
+             "price": [41_000, 37_000, 15_000],
+             "year": [2020, 2021, 2019]
+         })
+In [4]: type(car["price"])
+Out[4]: pandas.core.series.Series
+        \end{lstlisting}
+        \bigbreak
+        On peut également sélectionner une ou plusieurs séries dans un \lstinline{DataFrame} et donc avoir un nouveau \lstinline{DataFrame} en retour~:
+        \begin{lstlisting}[language=bash]
+In [5]: type(car[["model", "year"]]) # 2 square braquet donc un Dataframe
+Out[5]: pandas.core.frame.DataFrame
+In [6]: type(car[["price"]]) # 2 square braquet pas une seule
+Out[6]: pandas.core.series.DataFrame
+        \end{lstlisting}
     \end{frame}
 
 
@@ -999,6 +1020,22 @@ fig
         Un graphique minimal peut être généré en passant directement le DataFrame à la fonction \lstinline{plotly.express.pie}.
 
         Mais même cette version \textquote{simple} offre de nombreuses possibilités de personnalisation, voir \url{https://plotly.com/python-api-reference/generated/plotly.express.pie}.
+    \end{frame}
+
+    \begin{frame}{Plotly Express}{Plotly Express et Group By}
+        \begin{dangercolorbox}
+            Les données sous forme de \lstinline{Series} doivent avoir un nom de colonne et non un nom d'index.
+            Hors, le Group By transforme une Series en index par défault.
+            Il faut utiliser une méthode qui régénère l'index comme \lstinline{reset_index}.
+        \end{dangercolorbox}
+        \begin{columns}
+            \column{0.5\textwidth}
+            \centering
+            \includegraphics[width=6cm]{image/groupby-indexed}
+            \column{0.5\textwidth}
+            \centering
+            \includegraphics[width=6cm]{image/groupby-reset-index}
+        \end{columns}
     \end{frame}
 
     \subsection{Plotly}\label{plotly}
